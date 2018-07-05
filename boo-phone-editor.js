@@ -22,8 +22,8 @@ class BooPhoneEditor extends PolymerElement {
       <style>
         :host {
           display: block;
-          background-color: white;
-          color: grey;
+          background-color: var(--boo-phone-editor-bg-color, white);
+          color: var(--boo-phone-editor-fg-color, grey);
         }
         .block-manager {
           position: fixed;
@@ -63,13 +63,12 @@ class BooPhoneEditor extends PolymerElement {
         #content {
           overflow-y: auto;
           height: calc(100% - 80px);
+          padding: 10px;
         }
         #content .focus {
           box-shadow: 0px 0px 4px rgba(0, 0, 0, .4);
-          background-color: inherit;
-          border-radius: 3px;
-          padding: 10px;
-          margin: 10px;
+          background-color: var(--boo-phone-editor-bg-color, white);
+          color: var(--boo-phone-editor-fg-color, grey);
         }
         div.toolbar-content {
           display: inline-block;
@@ -224,18 +223,12 @@ class BooPhoneEditor extends PolymerElement {
   }
 
   _initBlock(block) {
-    let rect = block.getBoundingClientRect();
-    let item = {
-      top: this._blockTop(block),
-      height: rect.height,
-      elem: block
-    };
-    this._insertBlock(item);
     block.addEventListener('touchstart', function(e) {
       this.elems.forEach(function(item) {
         item.elem.classList.remove("focus");
       }.bind(this));
       let touch = e.changedTouches[0];
+      let rect = block.getBoundingClientRect();
       this.offsetX = touch.clientX - rect.left;
       this.offsetY = touch.clientY - rect.top;
       block.classList.add("focus");
@@ -255,8 +248,8 @@ class BooPhoneEditor extends PolymerElement {
       e.target.classList.remove('focus');
       this.moveBlock(block);
       block.style.position = 'static';
-      block.style.top = 'auto';
-      block.style.left = 'auto';
+      block.style.top = null;
+      block.style.left = null;
     }.bind(this));
   }
 
@@ -274,57 +267,20 @@ class BooPhoneEditor extends PolymerElement {
     return top;
   }
 
-  _insertBlock(item) {
-    if (!this.elems || this.elems && this.elems.length == 0) {
-      this.elems = [item];
-      return;
-    }
-    for(let i = 0; i < this.elems.length; ++i) {
-      if (this.elems[i].top < item.top) {
-        continue;
-      }
-      this.elems.splice(i, 0, item);
-      return;
-    }
-    this.elems.push(item);
-  }
-
   moveBlock(block) {
-    // 不需要调整位置
-    if (!this.elems || this.elems && this.elems.length == 0) {
-      return;
+    let bt = this._blockTop(block);
+    block.parentNode.removeChild(block);
+    let node = this.$.content.firstChild;
+    while(node) {
+      let top = this._blockTop(node);
+      let rect = node.getBoundingClientRect();
+      if (bt < top + (rect.height / 2)) {
+        this.$.content.insertBefore(block, node);
+        return;
+      }
+      node = node.nextSibling;
     }
-    let top = this._blockTop(block);
-    let idx = this._blockIdx(block);
-    let b = this.elems.splice(idx, 1)[0];
-    for (let i = 0; i < this.elems.length; ++i) {
-      let et = this.elems[i].top + this.elems[i].height / 2;
-      if (i >= idx) {
-        et -= b.height;
-      }
-      if (et > top) {
-        continue;
-      }
-      this.elems.splice(i, 0, b);
-      if (i == this.elems.length - 1) {
-        this.$.content.appendChild(block);
-      } else {
-        this.$.content.insertBefore(block, this.elems[i + 1].elem);
-      }
-      return;
-    }
-    this.elems.splice(this.elems.length - 1, 0, b);
     this.$.content.appendChild(block);
-  }
-
-  _blockIdx(block) {
-    for(let i = 0; i < this.elems.length; ++i) {
-      if (this.elems[i].elem == block) {
-        return i;
-      }
-    }
-
-    return 0;
   }
 }
 
