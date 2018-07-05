@@ -48,6 +48,10 @@ class BooPhoneEditorBlock extends PolymerElement {
           { block: "P", label: "p", }, 
         ],
       },
+      selectedBlock: {
+        type: String,
+        observer: "_selectedBlockChanged"
+      },
       selected: {
         type: Object,
         value: { block: "P", label: "p"},
@@ -57,6 +61,16 @@ class BooPhoneEditorBlock extends PolymerElement {
 
   _select(e) {
     this.selected = this.$.blocks.itemForElement(e.target);
+    this.selectedBlock = this.selected.block;
+  }
+
+  _selectedBlockChanged(block) {
+    for(let i in this.blocks) {
+      if (block == this.blocks[i].block) {
+        this.selected = this.blocks[i];
+        break;
+      }
+    }
   }
 }
 

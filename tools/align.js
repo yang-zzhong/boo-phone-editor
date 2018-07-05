@@ -70,12 +70,27 @@ class BooPhoneEditorAlign extends PolymerElement {
           label: "左对齐",
           icon: "align:format-align-left"
         },
+        notify: true
+      },
+      selectedAlign: {
+        type: String,
+        observer: '_selectedAlignChanged'
       }
     };
   }
 
   _select(e) {
     this.selected = this.$.aligns.itemForElement(e.target);
+    this.selectedAlign = this.selected.align;
+  }
+
+  _selectedAlignChanged(selectedAlign) {
+    for(let i in this.aligns) {
+      if (this.aligns[i].align == selectedAlign) {
+        this.selected = this.aligns[i];
+        break;
+      }
+    }
   }
 }
 

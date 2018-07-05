@@ -53,6 +53,7 @@ class BooPhoneEditor extends PolymerElement {
         }
         #textToolbar, #toolbar {
           display: none;
+          --boo-lan-row-height: 40px;
           --boo-land-row-to-left: {
             top: 12px;
           }
@@ -68,6 +69,7 @@ class BooPhoneEditor extends PolymerElement {
         #content .focus {
           box-shadow: 0px 0px 4px rgba(0, 0, 0, .4);
           background-color: var(--boo-phone-editor-bg-color, white);
+          width: calc(100% - 20px);
           color: var(--boo-phone-editor-fg-color, grey);
         }
         div.toolbar-content {
@@ -188,6 +190,11 @@ class BooPhoneEditor extends PolymerElement {
     this.$.toolbar.update();
   }
 
+  append(elem) {
+    this.$.content.appendChild(elem);
+    this._initBlock(elem);
+  }
+
   _inputTypeChanged(inputType) {
     if (inputType == 'other') {
       setTimeout(function() {
@@ -212,13 +219,11 @@ class BooPhoneEditor extends PolymerElement {
     if (this.value.trim() == "") {
       return;
     }
-    let block = this.$.block.selected;
-    let align = this.$.align.selected;
-    let elem = document.createElement(block.block);
-    elem.style.textAlign = align.align;
+    let elem = document.createElement(this.$.block.selectedBlock);
+    elem.style.textAlign = this.$.align.selectedAlign;
     elem.innerHTML = this.value;
-    this.$.content.appendChild(elem);
-    this._initBlock(elem);
+    this.append(elem);
+    this.inputType = "other";
     this.value = "";
   }
 
@@ -231,11 +236,16 @@ class BooPhoneEditor extends PolymerElement {
       let rect = block.getBoundingClientRect();
       this.offsetX = touch.clientX - rect.left;
       this.offsetY = touch.clientY - rect.top;
+      this.$.content.style.userSelect = 'none';
       block.classList.add("focus");
       block.style.position = 'fixed';
+      e.preventDefault();
     }.bind(this));
     block.addEventListener('touchcancel', function(e) {
+      block.style.position = 'static';
+      this.$.content.style.userSelect = 'text';
       e.target.classList.remove('focus');
+      e.preventDefault();
     }.bind(this));
     block.addEventListener('touchmove', function(e) {
       let touch = e.changedTouches[0];
@@ -243,13 +253,16 @@ class BooPhoneEditor extends PolymerElement {
       let top = touch.clientY - this.offsetY;
       block.style.top = top + 'px';
       block.style.left = left + 'px';
+      e.preventDefault();
     }.bind(this));
     block.addEventListener('touchend', function(e) {
       e.target.classList.remove('focus');
+      this.$.content.style.userSelect = 'text';
       this.moveBlock(block);
       block.style.position = 'static';
       block.style.top = null;
       block.style.left = null;
+      e.preventDefault();
     }.bind(this));
   }
 
