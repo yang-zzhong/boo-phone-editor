@@ -1,0 +1,25 @@
+{
+  "name": "boo-phone-editor",
+  "main": "boo-phone-editor.js",
+  "dependencies": {
+    "@polymer/polymer": "^3.0.0",
+    "@polymer/iron-flex-layout": "^3.0.0-pre.21",
+    "@polymer/iron-iconset-svg": "^3.0.0-pre.21",
+    "@polymer/iron-autogrow-textarea": "^3.0.0-pre.21",
+    "@polymer/paper-icon-button": "^3.0.0-pre.21",
+    "@polymer/paper-button": "^3.0.0-pre.21",
+    "@polymer/paper-listbox": "^3.0.0-pre.21",
+    "@polymer/paper-input": "^3.0.0-pre.21",
+    "@polymer/paper-item": "^3.0.0-pre.21",
+    "@polymer/paper-menu-button": "^3.0.0-pre.21",
+    "@polymer/app-layout": "^3.0.0-pre.21",
+    "boo-window": "0.0.9",
+    "boo-land-row": "0.1.0"
+  },
+  "devDependencies": {
+    "@polymer/iron-demo-helpers": "^3.0.0-pre.19",
+    "@webcomponents/webcomponentsjs": "^2.0.0",
+    "web-animations-js": "^2.3.1",
+    "wct-browser-legacy": "^1.0.0"
+  }
+}
